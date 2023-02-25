@@ -40,8 +40,7 @@ public class LocationInformationRepositorie : ILocationInformationRepositorie
     {
         var locationInformation = await this.applicationDbContext
             .Set<LocationInformation>()
-            .Where(x => x.LocationName == locationName)
-            .FirstAsync();
+            .FirstOrDefaultAsync(x => x.LocationName == locationName);
 
         return locationInformation;
     }

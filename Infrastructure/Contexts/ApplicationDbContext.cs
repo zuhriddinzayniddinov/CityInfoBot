@@ -5,9 +5,14 @@ namespace Infrastructure.Contexts;
 
 public class ApplicationDbContext : DbContext
 {
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        :base(options)
     {
-        optionsBuilder.UseSqlServer(@"Server=(localdb)\ProjectModels;Database=LocationInformation;Trusted_Connection=True;MultipleActiveResultSets=true;");
+
+    }
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        base.ConfigureConventions(configurationBuilder);
     }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
