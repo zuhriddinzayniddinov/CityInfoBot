@@ -11,7 +11,8 @@ internal class Program
 
         builder.Services
             .AddInfrastructure(builder.Configuration)
-            .AddDbContext<ApplicationDbContext>() // DbContext ni qo'shing
+            .AddServics(builder.Configuration)
+            .AddDbContext<ApplicationDbContext>()
             .AddUpdateHandler()
             .AddTelegramBotClient(builder.Configuration)
             .AddSwagger()
@@ -35,7 +36,7 @@ internal class Program
         using (var scope = builder.ApplicationServices.CreateScope())
         {
             var botClient = scope.ServiceProvider.GetRequiredService<ITelegramBotClient>();
-            var baseUrl = "https://304b-178-218-201-17.in.ngrok.io";
+            var baseUrl = "https://460b-178-218-201-17.eu.ngrok.io";
             var webhookUrl = $"{baseUrl}/bot";
             var webhookInfo = botClient.GetWebhookInfoAsync().Result;
 

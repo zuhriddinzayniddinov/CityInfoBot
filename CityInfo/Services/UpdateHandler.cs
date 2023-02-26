@@ -3,6 +3,8 @@ using Infrastructure.Repositories.LocationInformationRepositories;
 using Infrastructure.Repositories.UsersRepositories;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.VisualBasic;
+using Servics.LocationInformationServic;
+using Servics.UserServic;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -11,18 +13,18 @@ namespace CityInfo.Services;
 
 public class UpdateHandler
 {
-    private readonly ILocationInformationRepositorie locationInformationRepositorie;
-    private readonly IUserRepositorie userRepositorie;
     private readonly ITelegramBotClient telegramBotClient;
+    private readonly ILocationInfoServic locationInfoServic;
+    private readonly IUserServic userServis;
 
     public UpdateHandler(
-        ILocationInformationRepositorie locationInformationRepositorie,
-        IUserRepositorie userRepositorie,
-        ITelegramBotClient telegramBotClient)
+        ITelegramBotClient telegramBotClient,
+        ILocationInfoServic locationInfoServic,
+        IUserServic userServis)
     {
-        this.locationInformationRepositorie = locationInformationRepositorie;
-        this.userRepositorie = userRepositorie;
         this.telegramBotClient = telegramBotClient;
+        this.locationInfoServic = locationInfoServic;
+        this.userServis = userServis;
     }
 
     internal async Task UpdateHandlerAsync(Update update)
@@ -41,7 +43,7 @@ public class UpdateHandler
         var handler = message.Text switch
         {
             "/SuperAdmin" => AdminPanelAsync(message),
-            "/delete" => 
+            "/delete" => DeleteLocationInfoAsync(message),
             _ => GetInformationCity(message)
         };
 
@@ -50,23 +52,31 @@ public class UpdateHandler
 
     private async Task AdminPanelAsync(Message message)
     {
-        await SetInformationCityAsync(message);
+        await this.telegramBotClient.SendTextMessageAsync(
+            text: "Xush kelibsiz Admin",
+            chatId: message.Chat.Id);
     }
-
-    private Task HandleNotAvailableCommandAsync(Message message)
+    private async Task DeleteLocationInfoAsync(Message message)
     {
-        throw new NotImplementedException();
+        var locationInfo = await this.locationInfoServic.GetLocationInformationAsync(message.Text);
+        await this.locationInfoServic.DeleteLocationInformationAsync(locationInfo);
+    }
+    private async Task HandleNotAvailableCommandAsync(Message message)
+    {
+        await this.telegramBotClient.SendTextMessageAsync
+            (text: "Bunaqa buyruq yo'q, tekshirib qayta urining",
+            chatId: message.Chat.Id);
     }
 
-    public async Task GetInformationCity(Message messenge)
+    private async Task GetInformationCity(Message messenge)
     {
         if(messenge.Chat.Type != ChatType.Private)
         {
             return;
         }
 
-        var locationInfo = await this.locationInformationRepositorie
-            .SelectLocationInformationAsync(messenge.Text);
+        var locationInfo = await this.locationInfoServic
+            .GetLocationInformationAsync(messenge.Text);
 
         var sendText = "Hech qanday ma'lumot topilmadi";
 
@@ -80,7 +90,7 @@ public class UpdateHandler
             text: sendText);
     }
 
-    public async Task SetInformationCityAsync(Message messenge)
+    private async Task SetInformationCityAsync(Message messenge)
     {
         if (messenge.Chat.Type != ChatType.Private)
         {
@@ -89,11 +99,11 @@ public class UpdateHandler
 
         var locationInfo = new LocationInformation
         {
-            LocationName = messenge.Text + " mavzu",
-            LocationDescription = messenge.Text + " matin"
+            LocationName = messenge.Text + " mavzu1",
+            LocationDescription = messenge.Text + " matin1"
         };
 
-        await this.locationInformationRepositorie
-            .InsertLocationInformationAsync(locationInfo);
+        await this.locationInfoServic
+            .CreateLocationInformationAsync(locationInfo);
     }
 }

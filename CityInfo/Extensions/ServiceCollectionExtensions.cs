@@ -3,6 +3,8 @@ using Infrastructure.Contexts;
 using Infrastructure.Repositories.LocationInformationRepositories;
 using Infrastructure.Repositories.UsersRepositories;
 using Microsoft.EntityFrameworkCore;
+using Servics.LocationInformationServic;
+using Servics.UserServic;
 using Telegram.Bot;
 
 namespace CityInfo.Extensions;
@@ -23,10 +25,17 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ILocationInformationRepositorie, LocationInformationRepositorie>();
         services.AddScoped<IUserRepositorie, UserRepositorie>();
 
+        return services;
+    }
+    public static IServiceCollection AddServics(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        services.AddScoped<ILocationInfoServic, LocationInfoServic>();
+        services.AddScoped<IUserServic, UserServic>();
 
         return services;
     }
-
     public static IServiceCollection AddTelegramBotClient(
     this IServiceCollection services,
     IConfiguration configuration)
