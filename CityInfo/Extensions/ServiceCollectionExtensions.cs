@@ -17,7 +17,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddDbContextPool<ApplicationDbContext>(options =>
         {
-            string connectionString = @"Server=(localdb)\ProjectModels;Database=LocationInformation;Trusted_Connection=True;MultipleActiveResultSets=true;";
+            string connectionString = configuration.GetValue<string>("ConnectionString");
 
             options.UseSqlServer(connectionString);
         });
@@ -40,7 +40,7 @@ public static class ServiceCollectionExtensions
     this IServiceCollection services,
     IConfiguration configuration)
     {
-        string botApiKey = "5571209805:AAEreOQoNKAcN-EcuxfGSBVkxhw9qKUtw1Y";
+        string botApiKey = configuration.GetValue<string>("BotApiKey");
 
         services.AddSingleton<ITelegramBotClient, TelegramBotClient>(x => new TelegramBotClient(botApiKey));
 

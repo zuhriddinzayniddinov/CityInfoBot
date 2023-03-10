@@ -1,4 +1,5 @@
 ﻿using Domen.Entities;
+using Domen.Enums;
 using Infrastructure.Contexts;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,15 +14,23 @@ public class UserRepositorie : IUserRepositorie
         this.applicationDbContext = applicationDbContext;
     }
 
-    public async ValueTask<User> DeleteUserAsync(User user)
+    public async ValueTask<UserRole> Authorization(long telegramId)
     {
-        var user2 = this.applicationDbContext
+        var userRole = this.applicationDbContext.Set<User>()
+            .Where(x => x.TelegramId == telegramId)
+            .Select(x => x.Role)
+            .FirstOrDefault();
+
+        return userRole;
+    }
+
+    public async ValueTask DeleteUserAsync(long telegramId)
+    {
+        this.applicationDbContext
             .Set<User>()
-            .Remove(user);
+            .Remove(new User { TelegramId = telegramId});
 
         await this.SaveChangesAsync();
-
-        return user;
     }
 
     public async ValueTask<User> InsertUserAsync(User user)
@@ -50,6 +59,14 @@ public class UserRepositorie : IUserRepositorie
         await this.SaveChangesAsync();
 
         return user;
+    }
+
+    public async ValueTask<ICollection<User>> SelectUsersAsync()
+    {
+        var users = await this.applicationDbContext.Set<User>()
+            .Select(x => x).ToListAsync();
+
+        return users;
     }
 
     public async ValueTask<User> UpdateUserAsync(User user)

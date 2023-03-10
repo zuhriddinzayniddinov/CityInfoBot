@@ -2,7 +2,7 @@
 
 public enum UserRole
 {
-    SuperAdmin,
+    user,
     Admin,
-    user
+    SuperAdmin
 }

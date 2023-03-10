@@ -1,4 +1,5 @@
 ﻿using Domen.Entities;
+using Domen.Enums;
 using Infrastructure.Repositories.LocationInformationRepositories;
 using Infrastructure.Repositories.UsersRepositories;
 
@@ -14,26 +15,31 @@ public class UserServic : IUserServic
         this.userRepositorie = userRepositorie;
     }
 
+    public async Task<UserRole> AuthorizationAsync(long telegramId)
+    {
+        return await this.userRepositorie.Authorization(telegramId);
+    }
+
     public Task<User> CreateAdminAsync(User user)
     {
         throw new NotImplementedException();
     }
 
-    public Task<User> DeleteAdminAsync(User user)
+    public async Task DeleteAdminAsync(long telegramId)
     {
-        throw new NotImplementedException();
+        await this.userRepositorie.DeleteUserAsync(telegramId);
     }
 
-    public async Task<User> DeleteUserAsync(User user)
+    public async Task DeleteUserAsync(long telegramId)
     {
-        var userResult = await this.userRepositorie.DeleteUserAsync(user);
-
-        return userResult;
+        await this.userRepositorie.DeleteUserAsync(telegramId);
     }
 
-    public Task<ICollection<User>> GetAdminsAsync()
+    public async Task<ICollection<User>> GetAdminsAsync()
     {
-        throw new NotImplementedException();
+        var users = await this.userRepositorie.SelectUsersAsync();
+
+        return users;
     }
 
     public async Task<User> SingUpAsync(User user)

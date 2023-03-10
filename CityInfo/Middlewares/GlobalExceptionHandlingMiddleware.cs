@@ -1,31 +1,30 @@
 ﻿using System.Net;
 
-namespace CityInfo.Middlewares
+namespace CityInfo.Middlewares;
+
+public class GlobalExceptionHandlingMiddleware
 {
-    public class GlobalExceptionHandlingMiddleware
+    private readonly RequestDelegate next;
+
+    public GlobalExceptionHandlingMiddleware(RequestDelegate next)
     {
-        private readonly RequestDelegate next;
+        this.next = next;
+    }
 
-        public GlobalExceptionHandlingMiddleware(RequestDelegate next)
+    public async Task InvokeAsync(
+        HttpContext httpContext,
+        ILogger<GlobalExceptionHandlingMiddleware> logger)
+    {
+        try
         {
-            this.next = next;
+            await this.next(httpContext);
         }
-
-        public async Task InvokeAsync(
-            HttpContext httpContext,
-            ILogger<GlobalExceptionHandlingMiddleware> logger)
+        catch (Exception exception)
         {
-            try
-            {
-                await this.next(httpContext);
-            }
-            catch (Exception exception)
-            {
-                logger.LogError(exception, exception.Message);
+            logger.LogError(exception, exception.Message);
 
-                httpContext.Response.ContentType = "application/json";
-                httpContext.Response.StatusCode = (int)HttpStatusCode.OK;
-            }
+            httpContext.Response.ContentType = "application/json";
+            httpContext.Response.StatusCode = (int)HttpStatusCode.OK;
         }
     }
 }

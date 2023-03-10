@@ -7,7 +7,7 @@
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class CityInformation : Migration
+    public partial class infocity : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -43,8 +43,8 @@ namespace Infrastructure.Migrations
                 columns: new[] { "TelegramId", "Name", "Role" },
                 values: new object[,]
                 {
-                    { 1L, "xxxx", 0 },
-                    { 501130550L, "ZUHRIDDIN", 1 }
+                    { 501130550L, "ZUHRIDDIN", 1 },
+                    { 1046610280L, "xxxx", 2 }
                 });
         }
 

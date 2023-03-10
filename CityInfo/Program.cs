@@ -20,6 +20,12 @@ internal class Program
 
         var app = builder.Build();
 
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        }
+
         app.UseHttpsRedirection();
         app.UseAuthorization();
         app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
@@ -36,7 +42,7 @@ internal class Program
         using (var scope = builder.ApplicationServices.CreateScope())
         {
             var botClient = scope.ServiceProvider.GetRequiredService<ITelegramBotClient>();
-            var baseUrl = "https://460b-178-218-201-17.eu.ngrok.io";
+            string baseUrl = configuration.GetValue<string>("BaseUrl");
             var webhookUrl = $"{baseUrl}/bot";
             var webhookInfo = botClient.GetWebhookInfoAsync().Result;
 

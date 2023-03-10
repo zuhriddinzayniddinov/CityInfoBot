@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230223040002_CityInformation")]
-    partial class CityInformation
+    [Migration("20230301074103_infocity")]
+    partial class infocity
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -61,9 +61,9 @@ namespace Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            TelegramId = 1L,
+                            TelegramId = 1046610280L,
                             Name = "xxxx",
-                            Role = 0
+                            Role = 2
                         },
                         new
                         {
