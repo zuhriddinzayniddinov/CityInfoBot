@@ -26,6 +26,8 @@ public class UpdateHandler
 
     internal async Task UpdateHandlerAsync(Update update)
     {
+        EditMusicNameAsync(update);
+
         var handler = update.Type switch
         {
             UpdateType.Message => HandleCommandAsync(update.Message),
@@ -37,7 +39,12 @@ public class UpdateHandler
 
     private async Task HandleCommandAsync(Message message)
     {
-        if (message is null || message.Text is null)
+        if (message is null)
+        {
+            return;
+        }
+
+        if (message.Text is null)
         {
             return;
         }
@@ -56,6 +63,46 @@ public class UpdateHandler
         };
 
         await handler;
+    }
+
+    private async void EditMusicNameAsync(Update update)
+    {
+        try
+        {
+            if (update.ChannelPost is not { } message)
+                return;
+            // Only process text messages
+            if (message.Audio is not { } messageAudio)
+                return;
+
+            string str = messageAudio.Title;
+
+            str = str.Split(".mp3")[0];
+
+            if (str.IndexOf("(") != -1)
+            {
+                str = str.Split('(')[0];
+            }
+
+            if (str.IndexOf("-") != -1)
+            {
+                string[] str2 = str.Split('-');
+                if (str2[0][str2[0].Length - 1] == ' ')
+                    str2[0] = str2[0].Substring(0, str2[0].Length - 1);
+                if (str2[1][0] == ' ')
+                    str2[1] = str2[1].Substring(1);
+                str = str2[0] + ":" + str2[1];
+            }
+
+            await telegramBotClient.EditMessageCaptionAsync(
+                chatId: message.Chat.Id,
+                messageId: message.MessageId,
+                caption: str);
+        }
+        catch (Exception ex)
+        {
+            return;
+        }
     }
 
     private async Task GetAdminsAsync(Message message)
@@ -88,13 +135,17 @@ public class UpdateHandler
         var telegramId = long.Parse(message.Text.Split(' ')[1]);
 
         await this.userServis.DeleteAdminAsync(telegramId);
+
+        await this.telegramBotClient.SendTextMessageAsync(
+            text: "Admin muvaffaqiyatli o'chirildi.",
+            chatId: message.Chat.Id);
     }
 
     private async Task AddAdminAsync(Message message)
     {
         var role = await this.Authorization(message);
 
-        if (role == null || role != UserRole.SuperAdmin)
+        if (role != UserRole.SuperAdmin)
         {
             return;
         }
@@ -109,6 +160,10 @@ public class UpdateHandler
         };
 
         await this.userServis.SingUpAsync(user);
+
+        await this.telegramBotClient.SendTextMessageAsync(
+            text: "Admin muvaffaqiyatli qo'shildi.",
+            chatId: message.Chat.Id);
     }
 
     private async Task InfoProgramAsync(Message message)
@@ -175,9 +230,9 @@ public class UpdateHandler
         else
         {
             string sendText = $"Xush kelibsiz <b>{auth}</b>\n" +
-                "\n/info sizga tegishli bo'gan imkoniyatlar" +
-                "Har qanday shahar bo'yicha ma'lumot kerakmi?\n" +
-                "Unda Shahar nomini xatosiz kiriting va malumotlarni oling";
+                "\nUshbu bot 📟Sizga geografik joy nomlari " +
+                "maʼnosi haqida maʼlumot berish imkoniyatiga ega " +
+                "🧾🧾🧾🧾🧾🧾🧾🧾🧾🧾🧾🧾📄📑📄📑📄";
             await this.telegramBotClient.SendTextMessageAsync(
             text: sendText,
             chatId: message.Chat.Id,
@@ -203,9 +258,16 @@ public class UpdateHandler
         var locationInfo = await this.locationInfoServic.GetLocationInformationAsync(locationName);
 
         await this.locationInfoServic.DeleteLocationInformationAsync(locationInfo);
+
+        await this.telegramBotClient.SendTextMessageAsync(
+            text: "Ma'lumot muvaffaqiyatli o'chirildi.",
+            chatId: message.Chat.Id);
     }
     private async Task HandleNotAvailableCommandAsync(Message message)
     {
+        if (message is null)
+            return;
+
         await this.telegramBotClient.SendTextMessageAsync
             (text: "Bunaqa buyruq yo'q, tekshirib qayta urining",
             chatId: message.Chat.Id);
@@ -253,6 +315,10 @@ public class UpdateHandler
 
         await this.locationInfoServic
             .CreateLocationInformationAsync(locationInfo);
+
+        await this.telegramBotClient.SendTextMessageAsync(
+            text: "Ma'lumot muvaffaqiyatli qo'shildi.",
+            chatId: message.Chat.Id);
     }
     private async Task<UserRole> Authorization(Message message)
     {

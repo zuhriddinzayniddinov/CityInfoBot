@@ -26,8 +26,8 @@ internal class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
         {
             new User
             {
-                TelegramId = 1046610280,
-                Name = "xxxx",
+                TelegramId = 1009772481,
+                Name = "ABDUXAMIDOV",
                 Role = UserRole.SuperAdmin
             },
             new User

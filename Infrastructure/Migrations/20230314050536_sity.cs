@@ -7,7 +7,7 @@
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class infocity : Migration
+    public partial class sity : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -28,8 +28,7 @@ namespace Infrastructure.Migrations
                 name: "User",
                 columns: table => new
                 {
-                    TelegramId = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TelegramId = table.Column<long>(type: "bigint", nullable: false),
                     Role = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false)
                 },
@@ -44,7 +43,7 @@ namespace Infrastructure.Migrations
                 values: new object[,]
                 {
                     { 501130550L, "ZUHRIDDIN", 1 },
-                    { 1046610280L, "xxxx", 2 }
+                    { 1009772481L, "ABDUXAMIDOV", 2 }
                 });
         }
 

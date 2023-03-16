@@ -58,8 +58,8 @@ namespace Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            TelegramId = 1046610280L,
-                            Name = "xxxx",
+                            TelegramId = 1009772481L,
+                            Name = "ABDUXAMIDOV",
                             Role = 2
                         },
                         new
