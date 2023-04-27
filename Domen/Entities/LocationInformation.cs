@@ -1,5 +1,4 @@
 ﻿namespace Domen.Entities;
-
 public class LocationInformation
 {
     public string LocationName { get; set; }
